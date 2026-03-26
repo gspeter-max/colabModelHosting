@@ -91,7 +91,7 @@ def detect_hardware():
         info["device"] = "cuda"
         info["gpu_name"] = torch.cuda.get_device_name(0)
         info["gpu_memory_gb"] = round(
-            torch.cuda.get_device_properties(0).total_mem / 1e9, 1
+            torch.cuda.get_device_properties(0).total_memory / 1e9, 1
         )
 
         # Pick dtype based on GPU
