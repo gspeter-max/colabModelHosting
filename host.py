@@ -481,10 +481,14 @@ def main(model_name: str, port: int = 8000, tunnel: bool = True):
     import nest_asyncio
     nest_asyncio.apply()
 
-    import asyncio 
+    import asyncio
+
+    # Create uvicorn server
+    config = uvicorn.Config(app, host="0.0.0.0", port=port)
+    server = uvicorn.Server(config)
 
     loop = asyncio.get_event_loop()
-    loop.create_task(uvicorn.serve(app, host="0.0.0.0", port=port))
+    loop.create_task(server.serve())
 
     # Keep the cell alive so server keeps running
     import time
