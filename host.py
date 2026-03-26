@@ -511,24 +511,35 @@ def main(model_name: str, port: int = 8000, tunnel: bool = True):
 # ----------------------------------------
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Host any HuggingFace model")
-    parser.add_argument(
-        "--model",
-        type=str,
-        required=True,
-        help="HuggingFace model name (e.g. microsoft/Phi-3-mini-4k-instruct)",
-    )
-    parser.add_argument(
-        "--port",
-        type=int,
-        default=8000,
-        help="Port to serve on (default: 8000)",
-    )
-    parser.add_argument(
-        "--no-tunnel",
-        action="store_true",
-        help="Disable ngrok tunnel",
-    )
+    # Check if running in notebook (Colab/Kaggle)
+    in_notebook = __import__('sys').argv[0].endswith('ipykernel_launcher.py') or \
+                  __import__('os').path.exists('/kaggle/working')
 
-    args = parser.parse_args()
-    main(args.model, args.port, tunnel=not args.no_tunnel)
+    if in_notebook:
+        # Running in notebook - don't run argparse, just import and call main()
+        print("Notebook detected. Import and use like this:")
+        print('  from host import main')
+        print('  main("model-name")')
+    else:
+        # Running from command line
+        parser = argparse.ArgumentParser(description="Host any HuggingFace model")
+        parser.add_argument(
+            "--model",
+            type=str,
+            required=True,
+            help="HuggingFace model name (e.g. microsoft/Phi-3-mini-4k-instruct)",
+        )
+        parser.add_argument(
+            "--port",
+            type=int,
+            default=8000,
+            help="Port to serve on (default: 8000)",
+        )
+        parser.add_argument(
+            "--no-tunnel",
+            action="store_true",
+            help="Disable ngrok tunnel",
+        )
+
+        args = parser.parse_args()
+        main(args.model, args.port, tunnel=not args.no_tunnel)
