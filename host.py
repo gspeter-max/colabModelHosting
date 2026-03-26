@@ -478,7 +478,18 @@ def main(model_name: str, port: int = 8000, tunnel: bool = True):
     print(f"{'='*60}\n")
 
     # Run server
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    import nest_asyncio
+    nest_asyncio.apply()
+
+    import asyncio 
+
+    loop = asyncio.get_event_loop()
+    loop.create_task(uvicorn.serve(app, host="0.0.0.0", port=port))
+
+    # Keep the cell alive so server keeps running
+    import time
+    while True:
+        time.sleep(1)
 
 
 # ============================================================
